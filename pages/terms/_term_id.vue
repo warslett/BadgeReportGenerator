@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NavBar :heading="term.name" :breadcrumbs="breadcrumbs" :username="user.full_name" @logout="$auth.logout()" />
+    <NavBar :heading="term.name" />
     <div class="container-fluid py-4">
       <div class="row">
         <div class="col">
@@ -41,10 +41,19 @@ import {User} from "~/src/Model/User";
 import {Section} from "~/src/Model/Section";
 import {Term} from "~/src/Model/Term";
 import {Member} from "~/src/Model/Member";
+import Breadcrumb, {breadcrumb} from "~/src/UserInterface/BreadCrumb";
 
 export default Vue.extend({
   name: 'TermPage',
-  async asyncData({ params, $auth, error, $axios }): Promise<{ user: User, section: Section, term: Term, members: Array<Member>, breadcrumbs: Array<object> }> {
+  async data() {
+    return {
+      user: undefined as User,
+      section: undefined as Section,
+      term: undefined as Term,
+      members: undefined as Array<Member>
+    }
+  },
+  async asyncData({ params, $auth, error, $axios }) {
     if (null === $auth.user) {
       $auth.fetchUser()
     }
@@ -79,13 +88,17 @@ export default Vue.extend({
       user: user,
       section: foundSection as Section,
       term: foundTerm as Term,
-      members: response.data.items as Array<Member>,
-      breadcrumbs: [
-        { 'label': 'Sections', 'destination': '/' },
-        { 'label': foundSection!.group_name + ': ' + foundSection!.section_name, 'destination': '/sections/' + foundSection!.section_id },
-        { 'label': foundTerm!.name, 'destination': '/terms/' + foundTerm!.term_id }
-      ]
+      members: response.data.items as Array<Member>
     }
   },
+  computed: {
+    breadcrumbs(): Array<Breadcrumb> {
+      return [
+        breadcrumb('Sections', '/'),
+        breadcrumb(this.section.group_name + ': ' + this.section.section_name, '/sections/' + this.section.section_id),
+        breadcrumb(this.term.name, '/terms/' + this.term.term_id)
+      ]
+    }
+  }
 })
 </script>

@@ -12,7 +12,7 @@
       <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
         <div class="ms-md-auto pe-md-3 d-flex align-items-center">
           <div class="text-white">
-            {{ username }} <a href="javascript:void(0)" class="text-white text-xs" @click="$emit('logout')">Log out</a>
+            {{ user.full_name }} <a href="javascript:void(0)" class="text-white text-xs" @click="logout">Log out</a>
           </div>
         </div>
       </div>
@@ -22,8 +22,27 @@
 
 <script lang="ts">
 import Vue from "vue";
+import Breadcrumb from "~/src/UserInterface/BreadCrumb";
+import {User} from "~/src/Model/User";
 
 export default Vue.extend({
-  props: ['heading', 'breadcrumbs', 'username']
+  props: ['heading'],
+  computed: {
+    user(): User {
+      if (null === this.$auth.user) {
+        this.$auth.fetchUser()
+      }
+
+      return this.$auth.user!.data as User
+    },
+    breadcrumbs(): Array<Breadcrumb> {
+      return this.$parent.breadcrumbs == undefined ? [] : this.$parent.breadcrumbs
+    }
+  },
+  methods: {
+    logout: function () {
+      this.$auth.logout()
+    }
+  }
 })
 </script>

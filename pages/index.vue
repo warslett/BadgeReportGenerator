@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NavBar heading="Sections" :breadcrumbs="breadcrumbs" :username="user.full_name" @logout="$auth.logout()" />
+    <NavBar heading="Sections" />
     <div class="container-fluid py-4">
       <div class="row">
         <div class="col">
@@ -43,12 +43,13 @@
 <script lang="ts">
 import Vue from 'vue'
 import {User} from "~/src/Model/User";
+import {breadcrumb} from "~/src/UserInterface/BreadCrumb";
 
 export default Vue.extend({
   name: 'IndexPage',
   data() {
     return {
-      breadcrumbs: [{ 'label': 'Sections', 'destination': '/' }]
+      breadcrumbs: [breadcrumb('Sections', '/' )]
     }
   },
   computed : {
@@ -58,11 +59,6 @@ export default Vue.extend({
       }
 
       return this.$auth.user!.data as User
-    }
-  },
-  methods: {
-    logout: function () {
-      this.$auth.logout()
     }
   }
 })
