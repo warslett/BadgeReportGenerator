@@ -45,15 +45,15 @@ import Vue from 'vue'
 import {Section} from "~/src/Model/Section";
 import {User} from "~/src/Model/User";
 import {Term} from "~/src/Model/Term";
-import Breadcrumb, {breadcrumb} from "~/src/UserInterface/BreadCrumb";
+import {Breadcrumb, breadcrumb} from "~/src/UserInterface/BreadCrumb";
 
 export default Vue.extend({
   name: 'SectionPage',
-  async data() {
+  data() {
     return {
-      user: undefined as User,
-      section: undefined as Section,
-      terms: undefined as Array<Term>
+      user: {} as User,
+      section: {} as Section,
+      terms: [] as Array<Term>
     }
   },
   async asyncData({ params, $auth, error }) {
@@ -68,7 +68,7 @@ export default Vue.extend({
       error({ statusCode: 404, message: 'Section not found' })
     }
 
-    const terms = section!.terms.slice() as Array<Term>;
+    const terms = section!.terms.slice();
     terms.reverse();
 
     return {

@@ -41,16 +41,16 @@ import {User} from "~/src/Model/User";
 import {Section} from "~/src/Model/Section";
 import {Term} from "~/src/Model/Term";
 import {Member} from "~/src/Model/Member";
-import Breadcrumb, {breadcrumb} from "~/src/UserInterface/BreadCrumb";
+import {Breadcrumb, breadcrumb} from "~/src/UserInterface/BreadCrumb";
 
 export default Vue.extend({
   name: 'TermPage',
-  async data() {
+  data() {
     return {
-      user: undefined as User,
-      section: undefined as Section,
-      term: undefined as Term,
-      members: undefined as Array<Member>
+      user: {} as User,
+      section: {} as Section,
+      term: {} as Term,
+      members: [] as Array<Member>
     }
   },
   async asyncData({ params, $auth, error, $axios }) {

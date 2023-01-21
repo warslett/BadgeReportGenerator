@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import Breadcrumb from "~/src/UserInterface/BreadCrumb";
+import {Breadcrumb, BreadcrumbsPage} from "~/src/UserInterface/BreadCrumb";
 import {User} from "~/src/Model/User";
 
 export default Vue.extend({
@@ -36,7 +36,8 @@ export default Vue.extend({
       return this.$auth.user!.data as User
     },
     breadcrumbs(): Array<Breadcrumb> {
-      return this.$parent.breadcrumbs == undefined ? [] : this.$parent.breadcrumbs
+      const page = this.$parent as BreadcrumbsPage
+      return page.breadcrumbs
     }
   },
   methods: {
