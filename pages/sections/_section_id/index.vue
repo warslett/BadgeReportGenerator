@@ -3,7 +3,7 @@
     <NavBar :heading="section.group_name + ': ' + section.section_name" />
     <div class="container-fluid py-4">
       <div class="row">
-        <div class="col">
+        <div class="col-md-8">
           <div class="card mb-4">
             <div class="card-body">
               <div class="table-responsive p-0">
@@ -18,9 +18,9 @@
                   <tbody>
                   <tr v-for="term in terms" :key="term.term_id">
                     <td>
-                      <NuxtLink :to="'/sections/' + section.section_id + '/terms/' + term.term_id" class="text-sm text-bolder text-secondary mb-0">
+                      <a href="javascript:void(0)" v-on:click="selectTerm(term.term_id)" class="text-sm text-bolder text-secondary mb-0">
                         {{ term.name }}
-                      </NuxtLink>
+                      </a>
                     </td>
                     <td>
                       <NuxtLink :to="'/sections/' + section.section_id + '/terms/' + term.term_id" class="text-sm text-bolder text-secondary mb-0">
@@ -31,6 +31,28 @@
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        </div>
+        <div v-if="hasSelectedTerm" class="col-4">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <div class="float-start">
+                <h5 class="mt-3 mb-0">{{ selectedTerm.name }}</h5>
+              </div>
+            </div>
+            <div class="card-body">
+              <dl class="row">
+                <dt class="col-sm-3">Name</dt>
+                <dd class="col-sm-9">{{ selectedTerm.name }}</dd>
+                <dt class="col-sm-3">Start Date</dt>
+                <dd class="col-sm-9">{{ localeDate(selectedTerm.startdate) }}</dd>
+                <dt class="col-sm-3">End Date</dt>
+                <dd class="col-sm-9">{{ localeDate(selectedTerm.enddate) }}</dd>
+                <dt class="col-sm-3">Id</dt>
+                <dd class="col-sm-9">{{ selectedTerm.term_id }}</dd>
+              </dl>
+              <NuxtLink :to="'/sections/' + section.section_id + '/terms/' + selectedTerm.term_id" class="btn btn-primary">View Members</NuxtLink>
             </div>
           </div>
         </div>
@@ -55,7 +77,8 @@ export default Vue.extend({
     return {
       user: {} as User,
       section: {} as Section,
-      terms: [] as Array<Term>
+      terms: [] as Array<Term>,
+      selectedTerm: null as Term|null
     }
   },
   async asyncData({ params, $auth, error }) {
@@ -85,6 +108,21 @@ export default Vue.extend({
         breadcrumb('Sections', '/'),
         breadcrumb(this.section.group_name + ': ' + this.section.section_name, '/sections/' + this.section.section_id)
       ]
+    },
+    hasSelectedTerm(): boolean {
+      return this.selectedTerm != null
+    }
+  },
+  methods: {
+    selectTerm(term_id: number): void {
+      const foundTerm: Term|undefined = this.section.terms.find(item => item.term_id == term_id)
+      if (foundTerm == undefined) {
+        throw new Error("Could not find term with id " + term_id)
+      }
+      this.selectedTerm = foundTerm as Term
+    },
+    localeDate(date_string: string): string {
+      return new Date(date_string).toLocaleDateString()
     }
   }
 })

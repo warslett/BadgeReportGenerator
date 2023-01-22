@@ -102,6 +102,11 @@ export default {
         responseMode: '',
         acrValues: ''
       }
+    },
+    redirect: {
+      login: '/login',
+      logout: '/login',
+      home: '/'
     }
   },
 
