@@ -18,12 +18,12 @@
                   <tbody>
                   <tr v-for="term in terms" :key="term.term_id">
                     <td>
-                      <NuxtLink :to="'/terms/' + term.term_id" class="text-sm text-bolder text-secondary mb-0">
+                      <NuxtLink :to="'/sections/' + section.section_id + '/terms/' + term.term_id" class="text-sm text-bolder text-secondary mb-0">
                         {{ term.name }}
                       </NuxtLink>
                     </td>
                     <td>
-                      <NuxtLink :to="'/terms/' + term.term_id" class="text-sm text-bolder text-secondary mb-0">
+                      <NuxtLink :to="'/sections/' + section.section_id + '/terms/' + term.term_id" class="text-sm text-bolder text-secondary mb-0">
                         View Members
                       </NuxtLink>
                     </td>
@@ -46,9 +46,11 @@ import {Section} from "~/src/Model/Section";
 import {User} from "~/src/Model/User";
 import {Term} from "~/src/Model/Term";
 import {Breadcrumb, breadcrumb} from "~/src/UserInterface/BreadCrumb";
+import NavBar from "~/components/NavBar.vue";
 
 export default Vue.extend({
   name: 'SectionPage',
+  components: {NavBar},
   data() {
     return {
       user: {} as User,
@@ -58,7 +60,7 @@ export default Vue.extend({
   },
   async asyncData({ params, $auth, error }) {
     if (null === $auth.user) {
-      $auth.fetchUser()
+      await $auth.fetchUser()
     }
 
     const user = $auth.user!.data as User

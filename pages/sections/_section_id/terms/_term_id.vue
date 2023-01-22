@@ -42,9 +42,13 @@ import {Section} from "~/src/Model/Section";
 import {Term} from "~/src/Model/Term";
 import {Member} from "~/src/Model/Member";
 import {Breadcrumb, breadcrumb} from "~/src/UserInterface/BreadCrumb";
+import NavBar from "~/components/NavBar.vue";
+import {Auth} from "@nuxtjs/auth-next";
+import {NuxtAxiosInstance} from "@nuxtjs/axios";
 
 export default Vue.extend({
   name: 'TermPage',
+  components: {NavBar},
   data() {
     return {
       user: {} as User,
@@ -55,39 +59,32 @@ export default Vue.extend({
   },
   async asyncData({ params, $auth, error, $axios }) {
     if (null === $auth.user) {
-      $auth.fetchUser()
+      await $auth.fetchUser()
     }
 
     const user = $auth.user!.data as User
-    const termId = parseInt(params['term_id'])
-    let foundSection = undefined as Section|undefined
-    let foundTerm = undefined as Term|undefined
 
-    // Find section and term for page
-    for(let x = 0; x < user.sections.length && foundSection == undefined; x++) {
-      let currentSection = user.sections[x]
-      for (let y = 0; y < currentSection.terms.length && foundTerm == undefined; y++) {
-        let currentTerm = currentSection.terms[y];
-        if (currentTerm.term_id == termId) {
-          foundSection = currentSection
-          foundTerm = currentTerm
-        }
-      }
+    const foundSection: Section|undefined = user.sections.find(item => item.section_id == parseInt(params['section_id']))
+    if (foundSection == undefined) {
+      error({ statusCode: 404, message: 'Section not found' })
     }
+    const section = foundSection as Section
 
-    if (foundTerm == undefined || foundSection == undefined) {
+    const foundTerm: Term|undefined = section.terms.find(item => item.term_id == parseInt(params['term_id']))
+    if (foundTerm == undefined) {
       error({ statusCode: 404, message: 'Term not found' })
     }
+    const term = foundTerm as Term
 
     const response = await $axios.get('/osm/ext/members/contact/?action=getListOfMembers&sort=dob'
-      + '&sectionid=' + foundSection!.section_id
-      + '&termid=' + foundTerm!.term_id
-      + '&section=' + foundSection!.section_type)
+      + '&sectionid=' + section!.section_id
+      + '&termid=' + term!.term_id
+      + '&section=' + section!.section_type)
 
     return {
       user: user,
-      section: foundSection as Section,
-      term: foundTerm as Term,
+      section: section as Section,
+      term: term as Term,
       members: response.data.items as Array<Member>
     }
   },
@@ -96,7 +93,7 @@ export default Vue.extend({
       return [
         breadcrumb('Sections', '/'),
         breadcrumb(this.section.group_name + ': ' + this.section.section_name, '/sections/' + this.section.section_id),
-        breadcrumb(this.term.name, '/terms/' + this.term.term_id)
+        breadcrumb(this.term.name, '/sections/' + this.section.section_id + '/terms/' + this.term.term_id)
       ]
     }
   }

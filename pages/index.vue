@@ -44,9 +44,11 @@
 import Vue from 'vue'
 import {User} from "~/src/Model/User";
 import {breadcrumb} from "~/src/UserInterface/BreadCrumb";
+import NavBar from "~/components/NavBar.vue";
 
 export default Vue.extend({
   name: 'IndexPage',
+  components: {NavBar},
   data() {
     return {
       breadcrumbs: [breadcrumb('Sections', '/' )]
