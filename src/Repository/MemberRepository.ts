@@ -20,9 +20,7 @@ export class MemberRepository {
   }
 
   async findMember(section: Section, term: Term, scoutid: number): Promise<Member|undefined> {
-    const url = this.buildGetListOfMembersUrl(section, term)
-    const response = await this.cache.resolveAsync(url, () => this.axios.get(url))
-    const members = response.data.items as ReadonlyArray<Member>
+    const members = await this.findMembers(section, term)
     return members.find(item => item.scoutid == scoutid)
   }
 
@@ -31,6 +29,6 @@ export class MemberRepository {
       + '&sort=dob'
       + '&sectionid=' + section!.section_id
       + '&termid=' + term!.term_id
-      + '&section=' + section!.section_type;
+      + '&section=' + section!.section_type
   }
 }
