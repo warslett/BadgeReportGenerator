@@ -81,6 +81,7 @@ import {Term} from "~/src/Model/Term";
 import {Member} from "~/src/Model/Member";
 import {Breadcrumb, breadcrumb} from "~/src/UserInterface/BreadCrumb";
 import NavBar from "~/components/NavBar.vue";
+import {Context} from "~/src/Context";
 
 export default Vue.extend({
   name: 'TermPage',
@@ -94,7 +95,7 @@ export default Vue.extend({
       selectedMember: null as Member|null
     }
   },
-  async asyncData({ params, $auth, error, $axios }) {
+  async asyncData({ params, $auth, error, $members }: Context) {
     if (null === $auth.user) {
       await $auth.fetchUser()
     }
@@ -113,16 +114,13 @@ export default Vue.extend({
     }
     const term = foundTerm as Term
 
-    const response = await $axios.get('/osm/ext/members/contact/?action=getListOfMembers&sort=dob'
-      + '&sectionid=' + section!.section_id
-      + '&termid=' + term!.term_id
-      + '&section=' + section!.section_type)
+    const members = await $members.findMembers(section, term)
 
     return {
       user: user,
       section: section as Section,
       term: term as Term,
-      members: response.data.items as Array<Member>
+      members: members
     }
   },
   computed: {

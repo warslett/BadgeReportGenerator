@@ -69,6 +69,7 @@ import {User} from "~/src/Model/User";
 import {Term} from "~/src/Model/Term";
 import {Breadcrumb, breadcrumb} from "~/src/UserInterface/BreadCrumb";
 import NavBar from "~/components/NavBar.vue";
+import {Context} from "~/src/Context";
 
 export default Vue.extend({
   name: 'SectionPage',
@@ -81,7 +82,7 @@ export default Vue.extend({
       selectedTerm: null as Term|null
     }
   },
-  async asyncData({ params, $auth, error }) {
+  async asyncData({ params, $auth, error }: Context) {
     if (null === $auth.user) {
       await $auth.fetchUser()
     }
