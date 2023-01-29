@@ -18,7 +18,7 @@
                   <tbody>
                   <tr v-for="term in terms" :key="term.term_id">
                     <td>
-                      <a href="javascript:void(0)" v-on:click="selectTerm(term.term_id)" class="text-sm text-bolder text-secondary mb-0">
+                      <a href="javascript:void(0)" v-on:click="selectedTerm = term" class="text-sm text-bolder text-secondary mb-0">
                         {{ term.name }}
                       </a>
                     </td>
@@ -115,13 +115,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    selectTerm(term_id: number): void {
-      const foundTerm: Term|undefined = this.section.terms.find(item => item.term_id == term_id)
-      if (foundTerm == undefined) {
-        throw new Error("Could not find term with id " + term_id)
-      }
-      this.selectedTerm = foundTerm as Term
-    },
     localeDate(date_string: string): string {
       return new Date(date_string).toLocaleDateString()
     }

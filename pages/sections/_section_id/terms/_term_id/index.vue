@@ -20,7 +20,7 @@
                   <tbody>
                   <tr v-for="member in members">
                     <td>
-                      <a href="javascript:void(0)" v-on:click="selectMember(member.scoutid)" class="text-sm text-bolder text-secondary mb-0">
+                      <a href="javascript:void(0)" v-on:click="selectedMember = member" class="text-sm text-bolder text-secondary mb-0">
                         {{ member.full_name }}
                       </a>
                     </td>
@@ -133,15 +133,6 @@ export default Vue.extend({
     },
     hasSelectedMember(): boolean {
       return this.selectedMember != null
-    }
-  },
-  methods: {
-    selectMember: function (scoutid: number): void {
-      const foundMember: Member|undefined = this.members.find(item => item.scoutid == scoutid)
-      if (foundMember == undefined) {
-        throw new Error("Could not find member with id " + scoutid)
-      }
-      this.selectedMember = foundMember as Member
     }
   }
 })

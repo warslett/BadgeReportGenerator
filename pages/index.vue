@@ -18,7 +18,7 @@
                   <tbody>
                   <tr v-for="section in user.sections">
                     <td>
-                      <a href="javascript:void(0)" v-on:click="selectSection(section.section_id)" class="text-sm text-bolder text-secondary mb-0">
+                      <a href="javascript:void(0)" v-on:click="selectedSection = section" class="text-sm text-bolder text-secondary mb-0">
                         {{ section.group_name }}: {{ section.section_name }}
                       </a>
                     </td>
@@ -94,15 +94,6 @@ export default Vue.extend({
     },
     hasSelectedSection(): boolean {
       return this.selectedSection != null
-    }
-  },
-  methods: {
-    selectSection: function (section_id: number): void {
-      const foundSection: Section|undefined = this.user.sections.find(item => item.section_id == section_id)
-      if (foundSection == undefined) {
-        throw new Error("Could not find section with id " + section_id)
-      }
-      this.selectedSection = foundSection as Section
     }
   }
 })
