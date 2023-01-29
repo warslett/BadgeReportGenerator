@@ -26,7 +26,7 @@
                     <input type="checkbox" class="form-check" />
                   </td>
                   <td>
-                    <a href="javascript:void(0)" v-on:click="selectedBadge = badge" class="text-sm text-bolder text-secondary mb-0">
+                    <a href="javascript:void(0)" v-on:click="selectBadge(badge)" class="text-sm text-bolder text-secondary mb-0">
                       {{ badge.name }}
                     </a>
                   </td>
@@ -36,11 +36,11 @@
             </div>
           </div>
         </div>
-        <div v-if="hasSelectedBadge" class="col-md-8">
+        <div v-if="hasSelectedBadge" class="col-8">
           <div class="card mb-4">
             <div class="card-header pb-0">
               <div class="float-start">
-                <h5 class="mt-3">{{ selectedBadge.name }}</h5>
+                <h5 class="mt-3">{{ selectedBadgeTitle }}</h5>
                 <p class="text-sm mb-0">{{ selectedBadge.description }}</p>
               </div>
             </div>
@@ -61,12 +61,19 @@
                   <td class="text-sm text-wrap">
                     {{ requirement.tooltip }}
                   </td>
-                  <td class="text-sm text-wrap bg-white">
-
+                  <td :class="'text-sm text-wrap ' + selectedBadgeRecordRequirementClass(requirement)">
+                    {{ selectedBadgeRecordRequirement(requirement) }}
                   </td>
                 </tr>
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+        <div v-if="isLoadingBadge" class="col-8">
+          <div class="card">
+            <div class="card-body">
+              Loading...
             </div>
           </div>
         </div>
@@ -82,8 +89,10 @@ import {Section} from "~/src/Model/Section";
 import {Term} from "~/src/Model/Term";
 import {Member} from "~/src/Model/Member";
 import {breadcrumb, Breadcrumb} from "~/src/UserInterface/BreadCrumb";
-import {Context} from "~/src/Context";
 import {Badge} from "~/src/Model/Badge";
+import {BadgeRecord} from "~/src/Model/BadgeRecord";
+import {Context} from "@nuxt/types";
+import {BadgeRequirement} from "~/src/Model/BadgeRequirement";
 
 export default Vue.extend({
   name: 'MemberPage',
@@ -94,7 +103,9 @@ export default Vue.extend({
       term: {} as Term,
       member: {} as Member,
       badges: {} as ReadonlyArray<Badge>,
-      selectedBadge: null as Badge|null
+      selectedBadge: null as Badge|null,
+      selectedBadgeRecord: null as BadgeRecord|null,
+      isLoadingBadge: false
     }
   },
   async asyncData({ $auth, params, error, $members, $badges }: Context) {
@@ -142,7 +153,38 @@ export default Vue.extend({
       ]
     },
     hasSelectedBadge(): boolean {
-      return this.selectedBadge != null
+      return !this.isLoadingBadge && this.selectedBadge != null
+    },
+    selectedBadgeTitle(): string {
+      let badgeName = this.selectedBadge!.name
+      if (this.selectedBadgeRecord != null && this.selectedBadgeRecord!.awarded) {
+        badgeName += ' - AWARDED'
+      } else if (this.selectedBadgeRecord != null && this.selectedBadgeRecord!.completed) {
+        badgeName += ' - COMPLETED'
+      }
+      return badgeName
+    }
+  },
+  methods: {
+    async selectBadge(badge: Badge) {
+      this.isLoadingBadge = true
+      this.selectedBadge = badge
+      this.selectedBadgeRecord = await this.$badgeRecords.findBadgeRecordForMember(this.member, this.section, this.term, badge)
+      this.isLoadingBadge = false
+    },
+    selectedBadgeRecordRequirement(requirement: BadgeRequirement): string {
+      const badgeRecordRequirement = this.selectedBadgeRecord?.requirements?.get(requirement.field)
+      return badgeRecordRequirement == null ? 'Incomplete' : badgeRecordRequirement
+    },
+    selectedBadgeRecordRequirementIsComplete(requirement: BadgeRequirement): boolean {
+      const requirements = this.selectedBadgeRecord?.requirements
+      if (requirements == undefined) {
+        return false
+      }
+      return requirements!.has(requirement.field) && requirements!.get(requirement.field) != undefined
+    },
+    selectedBadgeRecordRequirementClass(requirement: BadgeRequirement): string {
+      return this.selectedBadgeRecordRequirementIsComplete(requirement) ? 'text-white bg-success' : 'text-muted bg-white'
     }
   }
 })

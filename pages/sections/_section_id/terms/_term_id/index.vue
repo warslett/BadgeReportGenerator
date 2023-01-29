@@ -81,7 +81,7 @@ import {Term} from "~/src/Model/Term";
 import {Member} from "~/src/Model/Member";
 import {Breadcrumb, breadcrumb} from "~/src/UserInterface/BreadCrumb";
 import NavBar from "~/components/NavBar.vue";
-import {Context} from "~/src/Context";
+import {Context} from "@nuxt/types";
 
 export default Vue.extend({
   name: 'TermPage',

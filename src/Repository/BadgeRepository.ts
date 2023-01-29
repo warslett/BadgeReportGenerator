@@ -6,8 +6,8 @@ import {BadgeRequirement} from "~/src/Model/BadgeRequirement";
 import {Cache} from "~/src/Cache/Cache";
 
 export class BadgeRepository {
-  cache: Cache<string, ReadonlyArray<Badge>>
-  axios: NuxtAxiosInstance
+  private readonly cache: Cache<string, ReadonlyArray<Badge>>
+  private readonly axios: NuxtAxiosInstance
 
   constructor(cache: Cache<string, ReadonlyArray<Badge>>, axios: NuxtAxiosInstance) {
     this.cache = cache

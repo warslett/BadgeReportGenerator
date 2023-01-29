@@ -5,8 +5,8 @@ import {Member} from "~/src/Model/Member";
 import {Cache} from "~/src/Cache/Cache";
 
 export class MemberRepository {
-  cache: Cache<string, any>
-  axios: NuxtAxiosInstance
+  private readonly cache: Cache<string, any>
+  private readonly axios: NuxtAxiosInstance
 
   constructor(cache: Cache<string, any>, axios: NuxtAxiosInstance) {
     this.cache = cache
