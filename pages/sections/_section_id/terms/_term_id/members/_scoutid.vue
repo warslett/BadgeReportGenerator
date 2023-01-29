@@ -45,28 +45,7 @@
               </div>
             </div>
             <div class="card-body">
-              <table class="table table-bordered align-items-center justify-content-center mb-0">
-                <thead>
-                <tr>
-                  <th class="text-uppercase text-xxs font-weight-bolder opacity-7 px-2 w-4">Requirement</th>
-                  <th class="text-uppercase text-xxs font-weight-bolder opacity-7 px-2">Description</th>
-                  <th class="text-uppercase text-xxs font-weight-bolder opacity-7 px-2">Complete</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="requirement in selectedBadge.requirements" :class="'module-' + requirement.module">
-                  <td class="text-sm align-text-top">
-                    {{ requirement.name }}
-                  </td>
-                  <td class="text-sm text-wrap">
-                    {{ requirement.tooltip }}
-                  </td>
-                  <td :class="'text-sm text-wrap ' + selectedBadgeRecordRequirementClass(requirement)">
-                    {{ selectedBadgeRecordRequirement(requirement) }}
-                  </td>
-                </tr>
-                </tbody>
-              </table>
+              <BadgeTable :badge-record="selectedBadgeRecord" :badge="selectedBadge" />
             </div>
           </div>
         </div>
@@ -92,10 +71,11 @@ import {breadcrumb, Breadcrumb} from "~/src/UserInterface/BreadCrumb";
 import {Badge} from "~/src/Model/Badge";
 import {BadgeRecord} from "~/src/Model/BadgeRecord";
 import {Context} from "@nuxt/types";
-import {BadgeRequirement} from "~/src/Model/BadgeRequirement";
+import BadgeTable from "~/components/BadgeTable.vue";
 
 export default Vue.extend({
   name: 'MemberPage',
+  components: {BadgeTable},
   data() {
     return {
       user: {} as User,
@@ -171,39 +151,7 @@ export default Vue.extend({
       this.selectedBadge = badge
       this.selectedBadgeRecord = await this.$badgeRecords.findBadgeRecordForMember(this.member, this.section, this.term, badge)
       this.isLoadingBadge = false
-    },
-    selectedBadgeRecordRequirement(requirement: BadgeRequirement): string {
-      const badgeRecordRequirement = this.selectedBadgeRecord?.requirements?.get(requirement.field)
-      return badgeRecordRequirement == null ? 'Incomplete' : badgeRecordRequirement
-    },
-    selectedBadgeRecordRequirementIsComplete(requirement: BadgeRequirement): boolean {
-      const requirements = this.selectedBadgeRecord?.requirements
-      if (requirements == undefined) {
-        return false
-      }
-      return requirements!.has(requirement.field) && requirements!.get(requirement.field) != undefined
-    },
-    selectedBadgeRecordRequirementClass(requirement: BadgeRequirement): string {
-      return this.selectedBadgeRecordRequirementIsComplete(requirement) ? 'text-white bg-success' : 'text-muted bg-white'
     }
   }
 })
 </script>
-
-<style>
-  .module-a {
-    background-color: #d6fddc;
-  }
-  .module-b {
-    background-color: #e7d3f5;
-  }
-  .module-c {
-    background-color: #fdf9d6;
-  }
-  .module-d {
-    background-color: #dcf3fd;
-  }
-  .module-e {
-    background-color: #fadcfd;
-  }
-</style>
