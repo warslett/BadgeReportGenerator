@@ -36,7 +36,7 @@ export class BadgeRecordRepository {
       const requirements = new Map<number, string>()
 
       badge.requirements.forEach(requirement => requirements.set(requirement.field, memberItemMap.get('_' + requirement.field)))
-      return new BadgeRecord(foundMemberItem.completed == '1', foundMemberItem.awarded == '1', requirements)
+      return new BadgeRecord(foundMemberItem.completed == '1', foundMemberItem.awarded == '1', badge, requirements)
     })
   }
 

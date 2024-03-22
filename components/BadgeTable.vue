@@ -9,7 +9,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr v-for="requirement in badge.requirements" :class="'module-' + requirement.module">
+    <tr v-for="requirement in badgeRecord.badge.requirements" :class="'module-' + requirement.module">
       <td class="text-sm align-text-top">
         {{ requirement.module.toUpperCase() }}
       </td>
@@ -34,7 +34,6 @@ import {BadgeRequirement} from "~/src/Model/BadgeRequirement";
 export default Vue.extend({
   name: "BadgeTable",
   props: {
-    badge: { type: Object as PropType<Badge>, required: true },
     badgeRecord: { type: Object as PropType<BadgeRecord>, required: true },
   },
   methods: {

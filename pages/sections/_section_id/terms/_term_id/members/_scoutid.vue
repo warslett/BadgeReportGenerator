@@ -9,6 +9,9 @@
               <div class="float-start">
                 <h5 class="mt-3 mb-0">Challenge Badges</h5>
               </div>
+              <div class="float-end no-print" v-if="checkedBadges.length > 0">
+                <button class="btn btn-primary mb-0" @click="generateBadgeRecords">Generate Report</button>
+              </div>
             </div>
             <div class="card-body">
               <table class="table align-items-center justify-content-center mb-0">
@@ -23,10 +26,10 @@
                 <tbody>
                 <tr v-for="badge in badges">
                   <td>
-                    <input type="checkbox" class="form-check" />
+                    <input type="checkbox" class="form-check" :value="badge" v-model="checkedBadges" />
                   </td>
                   <td>
-                    <a href="javascript:void(0)" v-on:click="selectBadge(badge)" class="text-sm text-bolder text-secondary mb-0">
+                    <a href="javascript:void(0)" v-on:click="toggleBadge(badge)" class="text-sm text-bolder text-secondary mb-0">
                       {{ badge.name }}
                     </a>
                   </td>
@@ -36,16 +39,19 @@
             </div>
           </div>
         </div>
-        <div v-if="hasSelectedBadge" class="col-8 col-print-12">
-          <div class="card mb-4">
-            <div class="card-header pb-0 page">
+        <div v-if="badgeRecords.length !== 0" class="col-8 col-print-12">
+          <div class="no-print mb-3 d-flex">
+            <button class="btn btn-white mb-0 ml-auto" @click="printReport">Print</button>
+          </div>
+          <div class="card mb-4 page" v-for="badgeRecord in badgeRecords">
+            <div class="card-header pb-0">
               <div class="float-start">
-                <h5 class="mt-3 mt-print-0 ">{{ selectedBadgeTitle }}</h5>
-                <p class="text-sm mb-0">{{ selectedBadge.description }}</p>
+                <h5 class="mt-3 mt-print-0 ">{{ badgeRecord.badge.name }}</h5>
+                <p class="text-sm mb-0">{{ badgeRecord.badge.description }}</p>
               </div>
             </div>
             <div class="card-body">
-              <BadgeTable :badge-record="selectedBadgeRecord" :badge="selectedBadge" />
+              <BadgeTable :badge-record="badgeRecord" />
             </div>
           </div>
         </div>
@@ -89,8 +95,8 @@ export default Vue.extend({
       term: {} as Term,
       member: {} as Member,
       badges: {} as ReadonlyArray<Badge>,
-      selectedBadge: null as Badge|null,
-      selectedBadgeRecord: null as BadgeRecord|null,
+      checkedBadges: [] as Badge[],
+      badgeRecords: [] as BadgeRecord[],
       isLoadingBadge: false
     }
   },
@@ -130,6 +136,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    BadgeRecord() {
+      return BadgeRecord
+    },
     breadcrumbs(): Array<Breadcrumb> {
       return [
         breadcrumb('Sections', '/'),
@@ -138,25 +147,25 @@ export default Vue.extend({
         breadcrumb(this.member.full_name, '/sections/' + this.section.section_id + '/terms/' + this.term.term_id + '/members/' + this.member.scoutid)
       ]
     },
-    hasSelectedBadge(): boolean {
-      return !this.isLoadingBadge && this.selectedBadge != null
-    },
-    selectedBadgeTitle(): string {
-      let badgeName = this.selectedBadge!.name
-      if (this.selectedBadgeRecord != null && this.selectedBadgeRecord!.awarded) {
-        badgeName += ' - AWARDED'
-      } else if (this.selectedBadgeRecord != null && this.selectedBadgeRecord!.completed) {
-        badgeName += ' - COMPLETED'
-      }
-      return badgeName
-    }
   },
   methods: {
-    async selectBadge(badge: Badge) {
+    toggleBadge(badge: Badge) {
+      const indexOfBadge = this.checkedBadges.indexOf(badge)
+      if (indexOfBadge === -1) {
+        this.checkedBadges.push(badge)
+      } else {
+        this.checkedBadges.splice(indexOfBadge, 1)
+      }
+    },
+    async generateBadgeRecords() {
       this.isLoadingBadge = true
-      this.selectedBadge = badge
-      this.selectedBadgeRecord = await this.$badgeRecords.findBadgeRecordForMember(this.member, this.section, this.term, badge)
+      const badgeRecordPromises = [] as Promise<BadgeRecord>[]
+      this.checkedBadges.forEach(badge => badgeRecordPromises.push(this.$badgeRecords.findBadgeRecordForMember(this.member, this.section, this.term, badge)))
+      this.badgeRecords = await Promise.all(badgeRecordPromises)
       this.isLoadingBadge = false
+    },
+    printReport() {
+      window.print()
     }
   }
 })

@@ -1,11 +1,15 @@
+import {Badge} from "~/src/Model/Badge";
+
 export class BadgeRecord {
   readonly completed: boolean
   readonly awarded: boolean
+  readonly badge: Badge
   readonly requirements: ReadonlyMap<number, string>
 
-  constructor(completed: boolean, awarded: boolean, requirements: Map<number, string>) {
+  constructor(completed: boolean, awarded: boolean, badge: Badge, requirements: Map<number, string>) {
     this.completed = completed;
     this.awarded = awarded;
+    this.badge = badge
     this.requirements = requirements;
   }
 
