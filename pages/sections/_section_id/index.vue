@@ -74,6 +74,12 @@ import {Context} from "@nuxt/types";
 export default Vue.extend({
   name: 'SectionPage',
   components: {NavBar},
+  head() {
+    const section = this.section as Section
+    return {
+      title: "Badge Report - " + section.section_name
+    };
+  },
   data() {
     return {
       user: {} as User,

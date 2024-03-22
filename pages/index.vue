@@ -78,6 +78,11 @@ import {Section} from "~/src/Model/Section";
 export default Vue.extend({
   name: 'IndexPage',
   components: {NavBar},
+  head() {
+    return {
+      title: "Badge Report - Sections"
+    };
+  },
   data() {
     return {
       selectedSection: null as Section|null,

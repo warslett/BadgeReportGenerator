@@ -86,6 +86,12 @@ import {Context} from "@nuxt/types";
 export default Vue.extend({
   name: 'TermPage',
   components: {NavBar},
+  head() {
+    const term = this.term as Term
+    return {
+      title: "Badge Report - " + term.name
+    };
+  },
   data() {
     return {
       user: {} as User,

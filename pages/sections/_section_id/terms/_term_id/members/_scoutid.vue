@@ -1,9 +1,9 @@
 <template>
   <div>
     <NavBar :heading="member.full_name" />
-    <div class="container-fluid py-4">
+    <div class="container-fluid py-4 py-print-0">
       <div class="row">
-        <div class="col-4">
+        <div class="col-4 no-print">
           <div class="card mb-4">
             <div class="card-header pb-0">
               <div class="float-start">
@@ -36,11 +36,11 @@
             </div>
           </div>
         </div>
-        <div v-if="hasSelectedBadge" class="col-8">
+        <div v-if="hasSelectedBadge" class="col-8 col-print-12">
           <div class="card mb-4">
-            <div class="card-header pb-0">
+            <div class="card-header pb-0 page">
               <div class="float-start">
-                <h5 class="mt-3">{{ selectedBadgeTitle }}</h5>
+                <h5 class="mt-3 mt-print-0 ">{{ selectedBadgeTitle }}</h5>
                 <p class="text-sm mb-0">{{ selectedBadge.description }}</p>
               </div>
             </div>
@@ -76,6 +76,12 @@ import BadgeTable from "~/components/BadgeTable.vue";
 export default Vue.extend({
   name: 'MemberPage',
   components: {BadgeTable},
+  head() {
+    const member = this.member as Member
+    return {
+      title: "Badge Report - " + member.full_name
+    };
+  },
   data() {
     return {
       user: {} as User,

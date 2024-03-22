@@ -35,6 +35,11 @@ import Vue from 'vue'
 export default Vue.extend({
   name: 'LoginPage',
   layout: 'login',
+  head() {
+    return {
+      title: "Badge Report - Login"
+    };
+  },
   methods: {
     login: async function () {
       await this.$auth.loginWith('social')

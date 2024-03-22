@@ -26,7 +26,7 @@ export class BadgeRecordRepository {
       type ResponseItem = { scoutid: number, awarded: string, completed: string }
       const responseItems = response.data.items as ResponseItem[]
 
-      const foundMemberItem: ResponseItem|undefined = responseItems.find(item => item.scoutid = member.scoutid)
+      const foundMemberItem: ResponseItem|undefined = responseItems.find(item => item.scoutid == member.scoutid)
       if (foundMemberItem == undefined) {
         throw new Error('Could not find badge record for ' + member.scoutid)
       }

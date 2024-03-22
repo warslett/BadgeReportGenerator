@@ -2,6 +2,7 @@
   <table class="table table-bordered align-items-center justify-content-center mb-0">
     <thead>
     <tr>
+      <th class="text-uppercase text-xxs font-weight-bolder opacity-7 px-2 w-4">Area</th>
       <th class="text-uppercase text-xxs font-weight-bolder opacity-7 px-2 w-4">Requirement</th>
       <th class="text-uppercase text-xxs font-weight-bolder opacity-7 px-2">Description</th>
       <th class="text-uppercase text-xxs font-weight-bolder opacity-7 px-2">Complete</th>
@@ -10,11 +11,12 @@
     <tbody>
     <tr v-for="requirement in badge.requirements" :class="'module-' + requirement.module">
       <td class="text-sm align-text-top">
+        {{ requirement.module.toUpperCase() }}
+      </td>
+      <td class="text-sm align-text-top">
         {{ requirement.name }}
       </td>
-      <td class="text-sm text-wrap">
-        {{ requirement.tooltip }}
-      </td>
+      <td class="text-sm text-wrap" v-html="nl2br(requirement.tooltip)"></td>
       <td :class="'text-sm text-wrap ' + badgeRecordRequirementClass(requirement)">
         {{ badgeRecordRequirement(requirement) }}
       </td>
@@ -46,6 +48,9 @@ export default Vue.extend({
     },
     badgeRecordRequirementClass(requirement: BadgeRequirement): string {
       return this.badgeRecordRequirementIsComplete(requirement) ? 'text-white bg-success' : 'text-muted bg-white'
+    },
+    nl2br(text: string): string {
+      return text.replaceAll("\n", "<br/>")
     }
   }
 })
