@@ -20,4 +20,14 @@ export class BadgeRecord {
   public hasRequirement(field: number): boolean {
     return this.requirements.has(field) && this.requirements.get(field) != undefined
   }
+
+  public getDisplayTile(): string {
+    let badgeName = this.badge.name
+    if (this.awarded) {
+      badgeName += ' - AWARDED'
+    } else if (this.completed) {
+      badgeName += ' - COMPLETED'
+    }
+    return badgeName
+  }
 }

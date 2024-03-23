@@ -13,10 +13,6 @@ body{
   print-color-adjust:exact !important;
 }
 
-.ml-auto {
-  margin-left: auto !important;
-}
-
 @media print {
   .page {
     page-break-after: always;

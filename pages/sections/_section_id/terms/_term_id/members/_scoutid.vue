@@ -3,23 +3,27 @@
     <NavBar :heading="member.full_name" />
     <div class="container-fluid py-4 py-print-0">
       <div class="row">
+        <div class="col-12 no-print mb-3 d-flex">
+          <button :disabled="checkedBadges.length === 0" class="btn btn-white me-2 mb-0" @click="generateBadgeRecords">Generate Report</button>
+          <button :disabled="badgeRecords.length === 0" class="btn btn-white me-2 mb-0" @click="resetReport">Reset Report</button>
+          <button :disabled="badgeRecords.length === 0" class="btn btn-white me-2 mb-0" @click="printReport">Print Report</button>
+        </div>
         <div class="col-4 no-print">
           <div class="card mb-4">
             <div class="card-header pb-0">
               <div class="float-start">
                 <h5 class="mt-3 mb-0">Challenge Badges</h5>
               </div>
-              <div class="float-end no-print" v-if="checkedBadges.length > 0">
-                <button class="btn btn-primary mb-0" @click="generateBadgeRecords">Generate Report</button>
+              <div class="float-end">
+                <button class="btn btn-sm btn-primary me-2 mb-0" @click="selectAll">Select All</button>
+                <button :disabled="checkedBadges.length === 0" class="btn btn-sm btn-primary mb-0" @click="resetSelection">Reset Selection</button>
               </div>
             </div>
             <div class="card-body">
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                 <tr>
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-2 w-4">
-                    <input type="checkbox" class="form-check" />
-                  </th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-2 w-4"></th>
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-2">Badge Name</th>
                 </tr>
                 </thead>
@@ -40,13 +44,10 @@
           </div>
         </div>
         <div v-if="badgeRecords.length !== 0" class="col-8 col-print-12">
-          <div class="no-print mb-3 d-flex">
-            <button class="btn btn-white mb-0 ml-auto" @click="printReport">Print</button>
-          </div>
           <div class="card mb-4 page" v-for="badgeRecord in badgeRecords">
             <div class="card-header pb-0">
               <div class="float-start">
-                <h5 class="mt-3 mt-print-0 ">{{ badgeRecord.badge.name }}</h5>
+                <h5 class="mt-3 mt-print-0 ">{{ badgeRecord.getDisplayTile() }}</h5>
                 <p class="text-sm mb-0">{{ badgeRecord.badge.description }}</p>
               </div>
             </div>
@@ -164,8 +165,22 @@ export default Vue.extend({
       this.badgeRecords = await Promise.all(badgeRecordPromises)
       this.isLoadingBadge = false
     },
+    resetReport() {
+      this.badgeRecords = []
+      this.checkedBadges = []
+    },
     printReport() {
       window.print()
+    },
+    selectAll() {
+      this.badges.forEach(badge => {
+        if (!this.checkedBadges.includes(badge)) {
+          this.checkedBadges.push(badge)
+        }
+      })
+    },
+    resetSelection() {
+      this.checkedBadges.splice(0, this.checkedBadges.length)
     }
   }
 })
